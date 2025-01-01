@@ -7,7 +7,7 @@ module.exports = {
       fontFamily: {
         syne: ['Syne', 'sans-serif'],
       },
-      screen: {
+      screens: {
         sm: '768px',
       },
     },

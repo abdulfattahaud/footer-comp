@@ -96,12 +96,14 @@ const Text = () => {
   }, [])
   return (
     <div className='pointer-events-none relative z-[1] flex flex-col items-center gap-[40px] text-white'>
-      <span className='text-center uppercase'>Is your big idea ready to go wild?</span>
+      <span className='text-center uppercase text-[clamp(0.75rem,0.5115rem+1.0178vw,1rem)]'>
+        Is your big idea ready to go wild?
+      </span>
       <div className='relative'>
         <h1
           ref={ref}
           id='title'
-          className='text-center font-syne text-[clamp(5rem,0.7143rem+8.9286vw,8.75rem)] leading-[.8]'
+          className='text-center font-syne text-[clamp(3.5rem,2.0687rem+6.1069vw,5rem)] sm:text-[clamp(5rem,0.7143rem+8.9286vw,8.75rem)] leading-[.8]'
         >
           Let’s Work <br />
           <span className='text-[#3A47F4]'>Together!</span>

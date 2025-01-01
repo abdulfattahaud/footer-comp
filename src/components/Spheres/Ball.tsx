@@ -1,12 +1,12 @@
 'use client'
-import { InstancedRigidBodies, RigidBody } from '@react-three/rapier'
-import { useEffect, useMemo } from 'react'
+import { InstancedRigidBodies } from '@react-three/rapier'
+import { useEffect, useMemo, useState } from 'react'
 import { useRef } from 'react'
 import * as THREE from 'three'
 
 export default function Balls() {
   const balls = useRef(null)
-  const ballsCount = 1500
+  const [ballsCount, setBallsCount] = useState(1000)
 
   const ballsTransforms = useMemo(() => {
     const pos = []
@@ -16,19 +16,26 @@ export default function Balls() {
       scales.push([0.25, 0.25, 0.25])
     }
     return { pos, scales }
-  }, [])
+  }, [ballsCount])
 
+  useEffect(() => {
+    // if (!balls.current) return
+    // balls.current.dispose()
+  }, [balls.current])
   // useEffect(() => {
-  //   if (balls.current) {
-  //     for (let i = 0; i < ballsCount; i++) {
-  //       const color = new THREE.Color(
-  //         `hsl(${Math.random() * 50 + 260}, ${Math.random() * 50 + 50}%, ${Math.random() * 30 + 40}%)`,
-  //       )
-  //       balls.current.setColorAt(i, color)
-  //     }
-  //     balls.current.instanceColor.needsUpdate = true
+  //   const handleResize = () => {
+  //     const screenWidth = window.innerWidth
+  //     // const newBallsCount = Math.floor(screenWidth / 2)
+  //     screenWidth < 768 ? setBallsCount(100) : setBallsCount(1000)
   //   }
-  // }, [ballsCount])
+
+  //   window.addEventListener('resize', handleResize)
+  //   handleResize() // Call once to set initial size
+
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize)
+  //   }
+  // }, [])
 
   return (
     <>
