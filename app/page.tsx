@@ -3,67 +3,76 @@
 import Spheres from '@/components/Spheres'
 import Image from 'next/image'
 import { gsap } from 'gsap'
+import { useGSAP } from '@gsap/react'
+
 import { useEffect, useRef } from 'react'
 import SplitType from 'split-type'
 const Text = () => {
   const ref = useRef<HTMLHeadingElement>(null)
+
   const moveLetter = () => {
     if (!ref.current) return
-    const orgLetters = gsap.utils.toArray(['#title .char']) as HTMLElement[]
-    const cloneLetters = gsap.utils.toArray(['#title-clone .word > .char']) as HTMLElement[]
+
+    const orgLetters = gsap.utils.toArray('#title .char') as HTMLElement[]
+    const cloneLetters = gsap.utils.toArray('#title-clone .char') as HTMLElement[]
     gsap.set(cloneLetters, { y: '120%' })
 
     const randomLetter = () => {
       const random = Math.floor(Math.random() * orgLetters.length)
+      if (!orgLetters[random] || !cloneLetters[random]) {
+        console.error('Element not found at index:', random)
+        return [null, null]
+      }
       return [orgLetters[random], cloneLetters[random]]
     }
 
-    const random = randomLetter()
-    const random2 = randomLetter()
+    const timeline = gsap.timeline({ repeat: -1, repeatDelay: 2.5 })
 
-    const randomDuration = Math.random() * 0.5 + 0.75
-    const randomDelay = Math.random() * 0.5
+    timeline.add(() => {
+      const [orgLetter, cloneLetter] = randomLetter()
+      const [orgLetter2, cloneLetter2] = randomLetter()
+      if (!orgLetter || !cloneLetter || !orgLetter2 || !cloneLetter2) return
 
-    gsap.to(random[0], {
-      y: '-120%',
-      ease: 'expo.inOut',
-      duration: randomDuration,
-      onComplete: () => {
-        gsap.set(random[0], { y: '0%' })
-      },
-    })
-    gsap.to(random[1], {
-      y: '0%',
-      ease: 'expo.inOut',
-      duration: randomDuration,
-      onComplete: () => {
-        gsap.set(random[1], { y: '120%' })
-      },
-    })
-    if (random2[0] !== random[0]) {
-      gsap.to(random2[0], {
+      const randomDuration = Math.random() * 0.5 + 0.75
+
+      gsap.to(orgLetter, {
         y: '-120%',
         ease: 'expo.inOut',
         duration: randomDuration,
-        delay: randomDelay,
         onComplete: () => {
-          gsap.set(random2[0], { y: '0%' })
+          gsap.set(orgLetter, { y: '0%' })
         },
       })
-      gsap.to(random2[1], {
+      gsap.to(cloneLetter, {
         y: '0%',
         ease: 'expo.inOut',
         duration: randomDuration,
-        delay: randomDelay,
         onComplete: () => {
-          gsap.set(random2[1], { y: '120%' })
+          gsap.set(cloneLetter, { y: '120%' })
         },
       })
-    }
+      if (orgLetter === orgLetter2) return
+      gsap.to(orgLetter2, {
+        y: '-120%',
+        ease: 'expo.inOut',
+        duration: randomDuration,
+        onComplete: () => {
+          gsap.set(orgLetter2, { y: '0%' })
+        },
+      })
+      gsap.to(cloneLetter2, {
+        y: '0%',
+        ease: 'expo.inOut',
+        duration: randomDuration,
+        onComplete: () => {
+          gsap.set(cloneLetter2, { y: '120%' })
+        },
+      })
+    })
   }
+
   useEffect(() => {
     if (!ref.current) return
-    gsap.config({ force3D: true })
     const split = new SplitType(ref.current, {
       types: 'chars,words',
       tagName: 'span',
@@ -75,6 +84,7 @@ const Text = () => {
       padding: '1.5rem 0',
       margin: '-1.5rem 0',
     })
+
     if (!ref.current.dataset.cloned) {
       const clone = ref.current.cloneNode(true) as HTMLElement
       clone.id = 'title-clone'
@@ -87,12 +97,12 @@ const Text = () => {
       })
       ref.current.dataset.cloned = 'true'
     }
-    const intervalId = setInterval(() => {
+  }, [])
+
+  useGSAP(() => {
+    setTimeout(() => {
       moveLetter()
-    }, 1500)
-    return () => {
-      clearInterval(intervalId)
-    }
+    }, 100)
   }, [])
   return (
     <div className='pointer-events-none relative z-[1] flex flex-col items-center gap-[40px] text-white'>
