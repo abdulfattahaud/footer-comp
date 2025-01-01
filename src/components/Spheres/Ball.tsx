@@ -18,17 +18,17 @@ export default function Balls() {
     return { pos, scales }
   }, [])
 
-  useEffect(() => {
-    if (balls.current) {
-      for (let i = 0; i < ballsCount; i++) {
-        const color = new THREE.Color(
-          `hsl(${Math.random() * 50 + 260}, ${Math.random() * 50 + 50}%, ${Math.random() * 30 + 40}%)`,
-        )
-        balls.current.setColorAt(i, color)
-      }
-      balls.current.instanceColor.needsUpdate = true
-    }
-  }, [ballsCount])
+  // useEffect(() => {
+  //   if (balls.current) {
+  //     for (let i = 0; i < ballsCount; i++) {
+  //       const color = new THREE.Color(
+  //         `hsl(${Math.random() * 50 + 260}, ${Math.random() * 50 + 50}%, ${Math.random() * 30 + 40}%)`,
+  //       )
+  //       balls.current.setColorAt(i, color)
+  //     }
+  //     balls.current.instanceColor.needsUpdate = true
+  //   }
+  // }, [ballsCount])
 
   return (
     <>

@@ -95,7 +95,7 @@ const Text = () => {
     }
   }, [])
   return (
-    <div className='pointer-events-none relative z-[1] flex flex-col items-center gap-[20px] text-white'>
+    <div className='pointer-events-none relative z-[1] flex flex-col items-center gap-[40px] text-white'>
       <span className='text-center uppercase'>Is your big idea ready to go wild?</span>
       <div className='relative'>
         <h1
