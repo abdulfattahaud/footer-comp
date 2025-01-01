@@ -1,4 +1,4 @@
-const title = 'React Three Next Starter'
+const title = 'Footer component'
 const url = 'https://react-three-next.vercel.app/'
 const description = 'The easiest and fastest way to create a 3D website using React Three Fiber and NextJS'
 const author = 'Author'
@@ -14,7 +14,9 @@ export default function Head() {
       <meta name='author' content={author} />
       <meta name='designer' content={author} />
       <meta name='publisher' content={author} />
-
+      <link rel='preconnect' href='https://fonts.googleapis.com' />
+      <link rel='preconnect' href='https://fonts.gstatic.com' />
+      <link href='https://fonts.googleapis.com/css2?family=Syne:wght@400..800&display=swap' rel='stylesheet'></link>
       {/* Search Engine Optimization Meta Tags */}
       <title>{title}</title>
       <meta name='description' content={description} />
