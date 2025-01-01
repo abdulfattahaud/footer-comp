@@ -125,7 +125,7 @@ const Text = () => {
 
 const Footer = () => {
   return (
-    <div className='flex h-screen w-full items-center justify-center'>
+    <div className='flex h-screen overflow-hidden w-full items-center justify-center'>
       <Image
         src={'/img/footer-bg.png'}
         alt='bg'
