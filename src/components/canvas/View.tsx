@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, Suspense, useImperativeHandle, useRef } from 'react'
-import { OrbitControls, PerspectiveCamera, View as ViewImpl } from '@react-three/drei'
+import { PerspectiveCamera, View as ViewImpl } from '@react-three/drei'
 import { Three } from '@/helpers/components/Three'
 
 export const Common = ({ color }: { color?: string }) => (
@@ -30,7 +30,7 @@ const View = forwardRef<HTMLDivElement, ViewProps>(({ children, orbit, ...props 
       <Three>
         <ViewImpl track={localRef}>
           {children}
-          {orbit && <OrbitControls />}
+          {/* {orbit && <OrbitControls />} */}
         </ViewImpl>
       </Three>
     </>
