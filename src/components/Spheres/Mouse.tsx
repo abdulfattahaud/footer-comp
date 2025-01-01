@@ -14,7 +14,7 @@ export default function Mouse() {
   })
   return (
     <>
-      <RigidBody colliders={false} ref={mouseSphere} scale={0.35} type='kinematicPosition'>
+      <RigidBody colliders={false} ref={mouseSphere} scale={0.5} type='kinematicPosition'>
         <BallCollider args={[2]} />
       </RigidBody>
     </>

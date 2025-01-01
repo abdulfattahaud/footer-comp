@@ -6,7 +6,7 @@ import * as THREE from 'three'
 
 export default function Balls() {
   const balls = useRef(null)
-  const ballsCount = 1000
+  const ballsCount = 1500
 
   const ballsTransforms = useMemo(() => {
     const pos = []
