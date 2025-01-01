@@ -113,7 +113,7 @@ const Text = () => {
         <h1
           ref={ref}
           id='title'
-          className='text-center font-syne text-[clamp(3.5rem,2.0687rem+6.1069vw,5rem)] sm:text-[clamp(5rem,0.7143rem+8.9286vw,8.75rem)] leading-[.8]'
+          className='text-center font-syne text-[clamp(4.25rem,2.0687rem+6.1069vw,5rem)] sm:text-[clamp(5rem,0.7143rem+8.9286vw,8.75rem)] leading-[.8]'
         >
           Let’s Work <br />
           <span className='text-[#3A47F4]'>Together!</span>
