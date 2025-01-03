@@ -212,11 +212,11 @@ function Spheres() {
   const { viewport } = useThree()
   const aspect = viewport.width / viewport.height
   const camera = useRef(null)
-  useHelper(camera, THREE.CameraHelper)
+  // useHelper(camera, THREE.CameraHelper)
   return (
     // <View orbit className='absolute left-0 top-0 size-full h-full'>
     <Suspense fallback={null}>
-      <OrbitControls />
+      {/* <OrbitControls /> */}
       <OrthographicCamera
         ref={camera}
         makeDefault
@@ -232,7 +232,7 @@ function Spheres() {
       <ambientLight intensity={0.5} />
       <Suspense>
         <Physics gravity={[0, -10, 0]}>
-          <Debug />
+          {/* <Debug /> */}
           <Balls />
           <Mouse />
           <Borders />
