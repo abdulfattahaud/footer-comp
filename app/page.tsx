@@ -2,8 +2,6 @@
 
 import Image from 'next/image'
 import { gsap } from 'gsap'
-import { useGSAP } from '@gsap/react'
-import * as THREE from 'three'
 import { Suspense } from 'react'
 import { Debug, Physics } from '@react-three/rapier'
 
@@ -13,8 +11,8 @@ import { Canvas } from '@react-three/fiber'
 import { InstancedRigidBodies } from '@react-three/rapier'
 import { useMemo, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { CuboidCollider, BallCollider, RigidBody } from '@react-three/rapier'
-import { Helper, OrbitControls, OrthographicCamera, PerspectiveCamera, useHelper } from '@react-three/drei'
+import { BallCollider, RigidBody } from '@react-three/rapier'
+import { OrthographicCamera, useHelper } from '@react-three/drei'
 
 const Text = () => {
   const ref = useRef<HTMLHeadingElement>(null)
@@ -130,49 +128,52 @@ const Text = () => {
     </div>
   )
 }
-
 function Borders() {
   return (
-    <RigidBody type='fixed' position={[0, 2, 0]} scale={[1, 1, 1]}>
-      {/* Back */}
-      <CuboidCollider args={[5, 10, 0.5]} position={[0.5, 0.5, -2.5]} />
-      {/* Front */}
-      <CuboidCollider args={[5, 10, 0.5]} position={[0.5, 0.5, 2.5]} />
-      {/* right */}
-      <CuboidCollider args={[2, 10, 0.5]} rotation={[0, Math.PI * -0.5, 0]} position={[6, 0.5, 0]} />
-      {/* Left */}
-      <CuboidCollider args={[2, 10, 0.5]} rotation={[0, Math.PI * -0.5, 0]} position={[-5, 0.5, 0]} />
-      {/* Floor */}
-      <CuboidCollider args={[10, 10, 0.5]} rotation={[Math.PI * -0.5, 0, 0]} position={[0, -5, 0]} />
-      {/* Ceil */}
-      <CuboidCollider args={[10, 10, 0.5]} rotation={[Math.PI * -0.5, 0, 0]} position={[0, 10, 0]} />
-      {/* Mid */}
-      <CuboidCollider
-        args={[6, 5, 0.15]}
-        // rotation={[Math.PI * -0.5, 0, 0]}
-        position={[0, 0, -1]}
-      />
+    <RigidBody type='fixed' position={[0, 0, 0]} scale={[1, 1, 1]}>
+      <mesh position={[0, 0, 0.45]}>
+        <boxGeometry args={[3.7, 2.5, 0.1]} />
+        <meshStandardMaterial color='white' transparent opacity={0} />
+      </mesh>
+      <mesh position={[0, 0, -0.45]}>
+        <boxGeometry args={[3.7, 2.5, 0.1]} />
+        <meshStandardMaterial color='red' transparent opacity={0} />
+      </mesh>
+      <mesh position={[1.8, 0, 0]}>
+        <boxGeometry args={[0.1, 2.5, 1]} />
+        <meshStandardMaterial color='black' transparent opacity={0} />
+      </mesh>
+      <mesh position={[-1.8, 0, 0]}>
+        <boxGeometry args={[0.1, 2.5, 1]} />
+        <meshStandardMaterial color='blue' transparent opacity={0} />
+      </mesh>
+      <mesh position={[0, -1.05, 0]}>
+        <boxGeometry args={[3.7, 0.1, 1]} />
+        <meshStandardMaterial color='green' transparent opacity={0} />
+      </mesh>
+      <mesh position={[0, 1, 0]}>
+        <boxGeometry args={[3.7, 0.1, 1]} />
+        <meshStandardMaterial color='cyan' transparent opacity={0} />
+      </mesh>
     </RigidBody>
   )
 }
 
 const Mouse = () => {
-  const { pointer } = useThree()
+  const { pointer, viewport } = useThree()
   const mouseSphere = useRef(null)
+  const aspect = viewport.width / viewport.height
 
-  useFrame((state) => {
-    // const elapsedTime = state.clock.getElapsedTime()
-    // const z = Math.sin(elapsedTime)
-
+  useFrame(() => {
     mouseSphere.current.setNextKinematicTranslation({
-      x: pointer.x * 4,
-      y: pointer.y * 2,
-      z: 1,
+      x: pointer.x * aspect,
+      y: pointer.y,
+      z: 0,
     })
   })
   return (
     <RigidBody ref={mouseSphere} type='kinematicPosition'>
-      <BallCollider args={[0.5]} />
+      <BallCollider args={[0.15]} />
     </RigidBody>
   )
 }
@@ -180,14 +181,14 @@ const Mouse = () => {
 function Balls() {
   const balls = useRef(null)
   const colliders = useRef(null)
-  const [ballsCount] = useState(500)
+  const [ballsCount] = useState(300)
 
   const ballsTransforms = useMemo(() => {
     const pos = []
     const scales = []
     for (let i = 0; i < ballsCount; i++) {
-      pos.push([(Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5])
-      scales.push([0.25, 0.25, 0.25])
+      pos.push([Math.random() - 0.5, Math.random() - 0.5, (Math.random() - 0.5) * 0.5])
+      scales.push([0.1, 0.1, 0.1])
     }
     return { pos, scales }
   }, [ballsCount])
@@ -209,24 +210,26 @@ function Balls() {
 }
 
 function Spheres() {
-  const { viewport } = useThree()
-  const aspect = viewport.width / viewport.height
-  const camera = useRef(null)
-  // useHelper(camera, THREE.CameraHelper)
+  const { viewport, camera } = useThree()
+  const vAspect = viewport.width / viewport.height
+  const cameraRef = useRef(null)
+
+  // useHelper(cameraRef, THREE.CameraHelper)
   return (
-    // <View orbit className='absolute left-0 top-0 size-full h-full'>
     <Suspense fallback={null}>
       {/* <OrbitControls /> */}
       <OrthographicCamera
-        ref={camera}
+        ref={cameraRef}
         makeDefault
-        left={-aspect * 2}
-        right={aspect * 2}
-        top={2}
-        bottom={-2}
-        near={0.01}
+        left={-vAspect}
+        right={vAspect}
+        top={1}
+        bottom={-1}
+        near={0.1}
         far={1000}
-        position={[0, 0, 5]}
+        manual
+        position={[0, 0, 100]}
+        zoom={1}
       />
       <directionalLight position={[1, 2, 3]} intensity={1.5} />
       <ambientLight intensity={0.5} />
@@ -239,7 +242,6 @@ function Spheres() {
         </Physics>
       </Suspense>
     </Suspense>
-    // </View>
   )
 }
 
@@ -255,7 +257,7 @@ const Footer = () => {
       />
       <Text />
       <div className='absolute left-0 top-0 size-full'>
-        <Canvas onCreated={(state) => (state.gl.toneMapping = THREE.AgXToneMapping)} className=''>
+        <Canvas className=''>
           <Spheres />
         </Canvas>
       </div>
