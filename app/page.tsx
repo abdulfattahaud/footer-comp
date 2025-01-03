@@ -5,7 +5,7 @@ import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import * as THREE from 'three'
 import { Suspense } from 'react'
-import { Physics } from '@react-three/rapier'
+import { Debug, Physics } from '@react-three/rapier'
 
 import { useEffect, useRef } from 'react'
 import SplitType from 'split-type'
@@ -14,10 +14,10 @@ import { InstancedRigidBodies } from '@react-three/rapier'
 import { useMemo, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { CuboidCollider, BallCollider, RigidBody } from '@react-three/rapier'
+import { Helper, OrbitControls, OrthographicCamera, PerspectiveCamera, useHelper } from '@react-three/drei'
 
 const Text = () => {
   const ref = useRef<HTMLHeadingElement>(null)
-
   const moveLetter = () => {
     if (!ref.current) return
 
@@ -107,7 +107,7 @@ const Text = () => {
     }
   }, [])
 
-  useGSAP(() => {
+  useEffect(() => {
     setTimeout(() => {
       moveLetter()
     }, 100)
@@ -133,7 +133,7 @@ const Text = () => {
 
 function Borders() {
   return (
-    <RigidBody type='fixed'>
+    <RigidBody type='fixed' position={[0, 2, 0]} scale={[1, 1, 1]}>
       {/* Back */}
       <CuboidCollider args={[5, 10, 0.5]} position={[0.5, 0.5, -2.5]} />
       {/* Front */}
@@ -147,58 +147,40 @@ function Borders() {
       {/* Ceil */}
       <CuboidCollider args={[10, 10, 0.5]} rotation={[Math.PI * -0.5, 0, 0]} position={[0, 10, 0]} />
       {/* Mid */}
-      {/* <CuboidCollider
-        args={[2.5, 2.5, 0.5]}
+      <CuboidCollider
+        args={[6, 5, 0.15]}
         // rotation={[Math.PI * -0.5, 0, 0]}
-        position={[0, 2.5, 0]}
-      /> */}
+        position={[0, 0, -1]}
+      />
     </RigidBody>
   )
 }
 
-function Mouse() {
-  const { viewport } = useThree()
+const Mouse = () => {
+  const { pointer } = useThree()
   const mouseSphere = useRef(null)
-  const mouse = useRef({ x: 0, y: 0 })
 
-  useEffect(() => {
-    const handleMouseMove = (event) => {
-      mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1
-      mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1
-    }
+  useFrame((state) => {
+    // const elapsedTime = state.clock.getElapsedTime()
+    // const z = Math.sin(elapsedTime)
 
-    const handleTouchMove = (event) => {
-      const touch = event.touches[0]
-      mouse.current.x = (touch.clientX / window.innerWidth) * 2 - 1
-      mouse.current.y = -(touch.clientY / window.innerHeight) * 2 + 1
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('touchmove', handleTouchMove)
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('touchmove', handleTouchMove)
-    }
-  }, [])
-
-  useFrame(() => {
     mouseSphere.current.setNextKinematicTranslation({
-      x: (mouse.current.x * viewport.width) / 3,
-      y: (mouse.current.y * viewport.height) / 3,
-      z: 0,
+      x: pointer.x * 4,
+      y: pointer.y * 2,
+      z: 1,
     })
   })
   return (
-    <RigidBody colliders={false} ref={mouseSphere} scale={0.5} type='kinematicPosition'>
-      <BallCollider args={[2]} />
+    <RigidBody ref={mouseSphere} type='kinematicPosition'>
+      <BallCollider args={[0.5]} />
     </RigidBody>
   )
 }
 
 function Balls() {
   const balls = useRef(null)
-  const [ballsCount] = useState(1000)
+  const colliders = useRef(null)
+  const [ballsCount] = useState(500)
 
   const ballsTransforms = useMemo(() => {
     const pos = []
@@ -212,6 +194,7 @@ function Balls() {
 
   return (
     <InstancedRigidBodies
+      ref={colliders}
       colliders='ball'
       positions={ballsTransforms.pos}
       scales={ballsTransforms.scales}
@@ -226,14 +209,30 @@ function Balls() {
 }
 
 function Spheres() {
+  const { viewport } = useThree()
+  const aspect = viewport.width / viewport.height
+  const camera = useRef(null)
+  useHelper(camera, THREE.CameraHelper)
   return (
     // <View orbit className='absolute left-0 top-0 size-full h-full'>
     <Suspense fallback={null}>
+      <OrbitControls />
+      <OrthographicCamera
+        ref={camera}
+        makeDefault
+        left={-aspect * 2}
+        right={aspect * 2}
+        top={2}
+        bottom={-2}
+        near={0.01}
+        far={1000}
+        position={[0, 0, 5]}
+      />
       <directionalLight position={[1, 2, 3]} intensity={1.5} />
       <ambientLight intensity={0.5} />
       <Suspense>
         <Physics gravity={[0, -10, 0]}>
-          {/* <Debug /> */}
+          <Debug />
           <Balls />
           <Mouse />
           <Borders />
