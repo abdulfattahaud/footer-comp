@@ -12,7 +12,8 @@ import { InstancedRigidBodies } from '@react-three/rapier'
 import { useMemo, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { BallCollider, RigidBody } from '@react-three/rapier'
-import { OrthographicCamera, useHelper } from '@react-three/drei'
+import { OrthographicCamera, useHelper, OrbitControls } from '@react-three/drei'
+import { RigidBodyApi } from '@react-three/rapier/dist/declarations/src/types'
 
 const Text = () => {
   const ref = useRef<HTMLHeadingElement>(null)
@@ -111,48 +112,87 @@ const Text = () => {
     }, 100)
   }, [])
   return (
-    <div className='pointer-events-none relative z-[1] flex flex-col items-center gap-[40px] text-white'>
-      <span className='text-center text-[clamp(0.75rem,0.5115rem+1.0178vw,1rem)] uppercase'>
-        Is your big idea ready to go wild?
-      </span>
-      <div className='relative'>
-        <h1
-          ref={ref}
-          id='title'
-          className='text-center font-syne text-[clamp(4.25rem,2.0687rem+6.1069vw,5rem)] leading-[.8] sm:text-[clamp(5rem,0.7143rem+8.9286vw,8.75rem)]'
-        >
-          Let’s Work <br />
-          <span className='text-[#3A47F4]'>Together!</span>
-        </h1>
+    <div className='pointer-events-none relative z-[1] mt-auto flex h-full flex-col items-center gap-[250px] text-white'>
+      <div className=' mt-auto flex flex-col gap-[70px]'>
+        <span className='text-center text-[clamp(0.75rem,0.5115rem+1.0178vw,1rem)] uppercase'>
+          Is your big idea ready to go wild?
+        </span>
+        <div className='relative'>
+          <h1
+            ref={ref}
+            id='title'
+            className='Syne700 text-center text-[clamp(4.25rem,2.0687rem+6.1069vw,5rem)] leading-[.8] sm:text-[clamp(5rem,0.7143rem+8.9286vw,8.75rem)]'
+          >
+            Let’s Work <br />
+            <span className='text-[#3A47F4]'>Together!</span>
+          </h1>
+        </div>
       </div>
+      <button
+        className='mb-[calc(1vh*7)] flex h-[3.375em] w-[15em] items-center  justify-center gap-[1em] rounded-[100px] bg-white text-[1.1em] text-black'
+        style={{
+          boxShadow: '0 6px 10px #0000000a,0 2px 4px #0000000a',
+        }}
+      >
+        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 16 16'>
+          <path
+            fill='#000'
+            fillRule='evenodd'
+            d='M7.25 2.736a.75.75 0 0 1 1.5 0v8.717l2.93-2.93a.75.75 0 0 1 1.061 1.06l-4.21 4.21-.53.53-.53-.53-4.211-4.21a.75.75 0 1 1 1.06-1.06l2.93 2.93V2.735Z'
+            clipRule='evenodd'
+          />
+        </svg>
+        <span>Continue To Scroll</span>
+        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 16 16'>
+          <path
+            fill='#000'
+            fillRule='evenodd'
+            d='M7.25 2.736a.75.75 0 0 1 1.5 0v8.717l2.93-2.93a.75.75 0 0 1 1.061 1.06l-4.21 4.21-.53.53-.53-.53-4.211-4.21a.75.75 0 1 1 1.06-1.06l2.93 2.93V2.735Z'
+            clipRule='evenodd'
+          />
+        </svg>
+      </button>
     </div>
   )
 }
 function Borders() {
+  const { viewport } = useThree()
+  const ref = useRef(null)
+  const [dimensions, setDimensions] = useState({ width: viewport.width, height: viewport.height })
+  const [aspect, setAspect] = useState(viewport.width / viewport.height)
+
+  const resize = () => {
+    setDimensions({ width: viewport.width, height: viewport.height })
+    setAspect(viewport.width / viewport.height)
+  }
+  useEffect(() => {
+    window.addEventListener('resize', resize)
+    return () => window.removeEventListener('resize', resize)
+  }, [])
   return (
-    <RigidBody type='fixed' position={[0, 0, 0]} scale={[1, 1, 1]}>
+    <RigidBody ref={ref} type='fixed' position={[0, 0, 0]} scale={[1, 1, 1]}>
       <mesh position={[0, 0, 0.45]}>
-        <boxGeometry args={[3.7, 2.5, 0.1]} />
+        <boxGeometry args={[dimensions.width, 2.5, 0.1]} />
         <meshStandardMaterial color='white' transparent opacity={0} />
       </mesh>
       <mesh position={[0, 0, -0.45]}>
-        <boxGeometry args={[3.7, 2.5, 0.1]} />
+        <boxGeometry args={[dimensions.width, 2.5, 0.1]} />
         <meshStandardMaterial color='red' transparent opacity={0} />
       </mesh>
-      <mesh position={[1.8, 0, 0]}>
+      <mesh position={[aspect + 0.1, 0, 0]}>
         <boxGeometry args={[0.1, 2.5, 1]} />
         <meshStandardMaterial color='black' transparent opacity={0} />
       </mesh>
-      <mesh position={[-1.8, 0, 0]}>
+      <mesh position={[-aspect - 0.1, 0, 0]}>
         <boxGeometry args={[0.1, 2.5, 1]} />
         <meshStandardMaterial color='blue' transparent opacity={0} />
       </mesh>
       <mesh position={[0, -1.05, 0]}>
-        <boxGeometry args={[3.7, 0.1, 1]} />
+        <boxGeometry args={[dimensions.width, 0.1, 1]} />
         <meshStandardMaterial color='green' transparent opacity={0} />
       </mesh>
       <mesh position={[0, 1, 0]}>
-        <boxGeometry args={[3.7, 0.1, 1]} />
+        <boxGeometry args={[dimensions.width, 0.1, 1]} />
         <meshStandardMaterial color='cyan' transparent opacity={0} />
       </mesh>
     </RigidBody>
@@ -161,7 +201,7 @@ function Borders() {
 
 const Mouse = () => {
   const { pointer, viewport } = useThree()
-  const mouseSphere = useRef(null)
+  const mouseSphere = useRef<RigidBodyApi>(null)
   const aspect = viewport.width / viewport.height
 
   useFrame(() => {
@@ -181,27 +221,56 @@ const Mouse = () => {
 function Balls() {
   const balls = useRef(null)
   const colliders = useRef(null)
-  const [ballsCount] = useState(300)
+  const [ballsCount, setCount] = useState(1)
+  const [key, setKey] = useState(0)
 
   const ballsTransforms = useMemo(() => {
     const pos = []
-    const scales = []
+
     for (let i = 0; i < ballsCount; i++) {
       pos.push([Math.random() - 0.5, Math.random() - 0.5, (Math.random() - 0.5) * 0.5])
-      scales.push([0.1, 0.1, 0.1])
     }
-    return { pos, scales }
+    return { pos }
   }, [ballsCount])
+
+  const updateBallsCount = () => {
+    if (window.innerWidth > 1500) {
+      setCount(300)
+    } else if (window.innerWidth > 1024) {
+      setCount(200)
+    } else if (window.innerWidth > 768) {
+      setCount(100)
+    } else [setCount(50)]
+    setKey((prevKey) => prevKey + 1)
+  }
+
+  useEffect(() => {
+    updateBallsCount()
+    window.addEventListener('resize', updateBallsCount)
+
+    return () => {
+      window.removeEventListener('resize', updateBallsCount)
+    }
+  }, [])
+
+  useEffect(() => {
+    // Reset ball positions and scales on refresh
+    if (balls.current) {
+      balls.current.instanceMatrix.needsUpdate = true
+    }
+  }, [ballsTransforms])
 
   return (
     <InstancedRigidBodies
+      key={key}
       ref={colliders}
       colliders='ball'
-      positions={ballsTransforms.pos}
-      scales={ballsTransforms.scales}
+      positions={ballsTransforms.pos as [number, number, number][]}
+      // scales={ballsTransforms.scales}
       angularDamping={0.5}
+      scales={Array(ballsCount).fill([0.1, 0.1, 0.1])}
     >
-      <instancedMesh ref={balls} args={[null, null, ballsCount]}>
+      <instancedMesh ref={balls} args={[null, null, ballsCount]} count={ballsCount}>
         <sphereGeometry />
         <meshStandardMaterial />
       </instancedMesh>
@@ -235,9 +304,9 @@ function Spheres() {
       <ambientLight intensity={0.5} />
       <Suspense>
         <Physics gravity={[0, -10, 0]}>
-          {/* <Debug /> */}
+          <Debug />
           <Balls />
-          <Mouse />
+          {/* <Mouse /> */}
           <Borders />
         </Physics>
       </Suspense>
@@ -246,8 +315,16 @@ function Spheres() {
 }
 
 const Footer = () => {
+  const [key, setKey] = useState(0)
+  const resize = () => {
+    setKey((prev) => prev + 1)
+  }
+  useEffect(() => {
+    window.addEventListener('resize', resize)
+    return () => window.removeEventListener('resize', resize)
+  }, [])
   return (
-    <div className='flex h-screen w-full items-center justify-center overflow-hidden'>
+    <div className='relative flex h-screen w-full items-center justify-center overflow-hidden'>
       <Image
         src={'/img/footer-bg.png'}
         alt='bg'
@@ -257,7 +334,7 @@ const Footer = () => {
       />
       <Text />
       <div className='absolute left-0 top-0 size-full'>
-        <Canvas className=''>
+        <Canvas key={key} className=''>
           <Spheres />
         </Canvas>
       </div>
