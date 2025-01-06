@@ -306,7 +306,7 @@ function Spheres() {
         <Physics gravity={[0, -10, 0]}>
           <Debug />
           <Balls />
-          {/* <Mouse /> */}
+          <Mouse />
           <Borders />
         </Physics>
       </Suspense>
@@ -324,7 +324,7 @@ const Footer = () => {
     return () => window.removeEventListener('resize', resize)
   }, [])
   return (
-    <div className='relative flex h-screen w-full items-center justify-center overflow-hidden'>
+    <div className='relative flex h-svh w-full items-center justify-center overflow-hidden'>
       <Image
         src={'/img/footer-bg.png'}
         alt='bg'
