@@ -304,7 +304,7 @@ function Spheres() {
       <ambientLight intensity={0.5} />
       <Suspense>
         <Physics gravity={[0, -10, 0]}>
-          <Debug />
+          {/* <Debug /> */}
           <Balls />
           <Mouse />
           <Borders />
