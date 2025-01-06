@@ -112,7 +112,7 @@ const Text = () => {
     }, 100)
   }, [])
   return (
-    <div className='pointer-events-none relative z-[1] mt-auto flex h-full flex-col items-center gap-[250px] text-white'>
+    <div className='pointer-events-none relative z-[1] mt-auto flex h-full flex-col items-center gap-[150px] text-white md:gap-[250px]'>
       <div className=' mt-auto flex flex-col gap-[70px]'>
         <span className='text-center text-[clamp(0.75rem,0.5115rem+1.0178vw,1rem)] uppercase'>
           Is your big idea ready to go wild?
