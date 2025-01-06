@@ -238,9 +238,9 @@ function Balls() {
       setCount(300)
     } else if (window.innerWidth > 1024) {
       setCount(200)
-    } else if (window.innerWidth > 768) {
+    } else {
       setCount(100)
-    } else [setCount(50)]
+    }
     setKey((prevKey) => prevKey + 1)
   }
 
